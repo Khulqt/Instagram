@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instagram Likes Booster</title>
+    <title>Login Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -52,7 +52,7 @@
         .btn:hover {
             background-color: #218838;
         }
-        .result {
+        .result, .success-message {
             margin-top: 20px;
             padding: 10px;
             background-color: #d4edda;
@@ -60,14 +60,39 @@
             border-radius: 4px;
             display: none;
         }
+        .hidden {
+            display: none;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .success-message {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="loginContainer">
+        <h2>Login</h2>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Username">
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        <button class="btn" onclick="login()">Login</button>
+        <div class="result" id="loginResult"></div>
+    </div>
+    <div class="container hidden" id="contentContainer">
         <h2>Instagram Likes Booster</h2>
         <div class="form-group">
-            <label for="username">Instagram Username:</label>
-            <input type="text" id="username" placeholder="@username">
+            <label for="instagramUsername">Instagram Username:</label>
+            <input type="text" id="instagramUsername" placeholder="@username">
         </div>
         <div class="form-group">
             <label for="link">Post Link:</label>
@@ -78,8 +103,46 @@
     </div>
 
     <script>
-        async function sendRequest() {
+        const correctUsername = "admin"; // اسم المستخدم الصحيح
+        const correctPassword = "password"; // كلمة المرور الصحيحة
+
+        // Function to check login status
+        function checkLogin() {
+            if (localStorage.getItem('loggedIn') === 'true') {
+                document.getElementById('loginContainer').classList.add('hidden');
+                document.getElementById('contentContainer').classList.remove('hidden');
+            }
+        }
+
+        // Call checkLogin on page load
+        checkLogin();
+
+        function login() {
             const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginResult = document.getElementById('loginResult');
+
+            if (username === correctUsername && password === correctPassword) {
+                localStorage.setItem('loggedIn', 'true');
+                document.getElementById('loginContainer').classList.add('hidden');
+                document.getElementById('contentContainer').classList.remove('hidden');
+                loginResult.innerHTML = "البيانات صحيحة ✅";
+                loginResult.classList.add('success-message');
+                loginResult.style.display = 'block';
+                setTimeout(() => {
+                    loginResult.style.display = 'none';
+                }, 3000); // Hide message after 3 seconds
+            } else {
+                loginResult.innerHTML = `
+                    Invalid username or password.<br>
+                    <span class="error-message">Please contact the developer: <a href="https://wa.me/+201503480089" target="_blank">WhatsApp</a></span>
+                `;
+                loginResult.style.display = 'block';
+            }
+        }
+
+        async function sendRequest() {
+            const username = document.getElementById('instagramUsername').value;
             const link = document.getElementById('link').value;
             const email = Math.floor(Math.random() * 900000 + 100000) + "@gmail.com";
             const payload = JSON.stringify({
